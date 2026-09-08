@@ -44,7 +44,7 @@ services:
   # Os nomes de contêiner DEVEM ser e1-host-b1 e e1-host-b2,
   # porque é assim que verificar.sh procura por eles.
   # Copie o padrão de host-a1 e ajuste rede e endereço.
-  # ------------------------------------------------------------------
+  # -----------------------------------------------------
 
   host-b1:
     <<: *host
@@ -65,3 +65,4 @@ networks:
     driver: bridge
 
     ipam: {config: [{subnet: 10.0.20.0/24}]}
+
