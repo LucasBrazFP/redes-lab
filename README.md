@@ -113,3 +113,48 @@ git clone <repo-do-grupo> && cd <repo> && make up E=2 && make verificar E=2
 
 Os roteiros imprimem o valor observado em cada ponto, não só passou/falhou —
 dá para corrigir lendo a saída.
+
+## Entrega 1 — Plano de endereçamento e isolamento
+
+### Plano de endereçamento
+
+A Entrega 1 utiliza duas sub-redes IPv4 independentes, ambas com máscara `/24`.
+
+#### Segmento A
+
+- Sub-rede: `10.0.10.0/24`
+- Máscara: `255.255.255.0`
+- Total de endereços: `2^(32-24) = 2^8 = 256`
+- Endereços utilizáveis para hosts: `256 - 2 = 254`
+- Endereço de rede: `10.0.10.0`
+- Broadcast: `10.0.10.255`
+
+| Máquina | Endereço |
+|---|---|
+| `host-a1` | `10.0.10.10/24` |
+| `host-a2` | `10.0.10.11/24` |
+| `srv-a` | `10.0.10.20/24` |
+
+#### Segmento B
+
+- Sub-rede: `10.0.20.0/24`
+- Máscara: `255.255.255.0`
+- Total de endereços: `2^(32-24) = 2^8 = 256`
+- Endereços utilizáveis para hosts: `256 - 2 = 254`
+- Endereço de rede: `10.0.20.0`
+- Broadcast: `10.0.20.255`
+
+| Máquina | Endereço |
+|---|---|
+| `host-b1` | `10.0.20.10/24` |
+| `host-b2` | `10.0.20.11/24` |
+
+Os endereços terminados em `.0` e `.255` não foram atribuídos aos hosts porque, em uma rede `/24`, o primeiro representa o endereço da própria rede e o último é utilizado para broadcast.
+
+### Por que o segmento A não alcança o segmento B?
+
+Os segmentos A e B são sub-redes diferentes: A utiliza `10.0.10.0/24`, enquanto B utiliza `10.0.20.0/24`. Cada host possui apenas a rota referente à sua própria sub-rede e a rota padrão foi removida propositalmente da configuração dos contêineres.
+
+Assim, quando um host do segmento A tenta acessar um endereço do segmento B, como `10.0.20.10`, ele não possui uma rota para essa rede. Como não existe roteador configurado entre os dois segmentos, o sistema operacional informa `Network unreachable`.
+
+O mesmo princípio impede que um host do segmento B alcance o servidor do segmento A. A verificação da entrega comprova esse isolamento, enquanto os testes de ping dentro de cada segmento comprovam que os hosts conseguem se comunicar normalmente quando estão na mesma sub-rede.
