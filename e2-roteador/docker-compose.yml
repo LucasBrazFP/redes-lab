@@ -6,11 +6,8 @@
 # TAREFA DO GRUPO: dar a host-a1 e a host-b1 a rota para a sub-rede do outro
 # lado, dentro do `command` (infraestrutura como código — nada de digitar no
 # terminal e perder na próxima sessão).
-#   Exemplo do que falta acrescentar:  ip route add <rede> via <roteador>
 #
-# host-a2 fica DE PROPÓSITO sem rota. Ele é o grupo de controle: mesma
-# topologia, mesma máquina, só muda a configuração. Se host-a2 passasse a
-# alcançar o outro lado sozinho, a prova não valeria nada.
+# host-a2 fica DE PROPÓSITO sem rota. Ele é o grupo de controle.
 
 name: e2
 
@@ -23,23 +20,44 @@ services:
   host-a1:
     <<: *host
     container_name: e2-host-a1
-    networks: {seg-a: {ipv4_address: 10.0.10.10}}
+    networks:
+      seg-a:
+        ipv4_address: 10.0.10.10
+    command:
+      - sh
+      - -c
+      - |
+        ip route del default 2>/dev/null || true
+        ip route add 10.0.20.0/24 via 10.0.10.254
+        exec sleep infinity
 
   host-a2:                       # controle — NÃO acrescente rota aqui
     <<: *host
     container_name: e2-host-a2
-    networks: {seg-a: {ipv4_address: 10.0.10.11}}
+    networks:
+      seg-a:
+        ipv4_address: 10.0.10.11
 
   host-b1:
     <<: *host
     container_name: e2-host-b1
-    networks: {seg-b: {ipv4_address: 10.0.20.10}}
+    networks:
+      seg-b:
+        ipv4_address: 10.0.20.10
+    command:
+      - sh
+      - -c
+      - |
+        ip route del default 2>/dev/null || true
+        ip route add 10.0.10.0/24 via 10.0.20.254
+        exec sleep infinity
 
   router:
     image: redes-lab-base:1
     container_name: e2-router
     cap_add: [NET_ADMIN, NET_RAW]
-    sysctls: ["net.ipv4.ip_forward=1"]
+    sysctls:
+      - "net.ipv4.ip_forward=1"
     command:
       - sh
       - -c
@@ -48,15 +66,20 @@ services:
         sysctl -w net.ipv4.ip_forward=1 2>/dev/null || true
         exec sleep infinity
     networks:
-      seg-a: {ipv4_address: 10.0.10.254}
-      seg-b: {ipv4_address: 10.0.20.254}
+      seg-a:
+        ipv4_address: 10.0.10.254
+      seg-b:
+        ipv4_address: 10.0.20.254
 
 networks:
   seg-a:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.10.0/24
 
-    ipam: {config: [{subnet: 10.0.10.0/24}]}
   seg-b:
     driver: bridge
-
-    ipam: {config: [{subnet: 10.0.20.0/24}]}
+    ipam:
+      config:
+        - subnet: 10.0.20.0/24
