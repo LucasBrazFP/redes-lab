@@ -158,3 +158,8 @@ Os segmentos A e B são sub-redes diferentes: A utiliza `10.0.10.0/24`, enquanto
 Assim, quando um host do segmento A tenta acessar um endereço do segmento B, como `10.0.20.10`, ele não possui uma rota para essa rede. Como não existe roteador configurado entre os dois segmentos, o sistema operacional informa `Network unreachable`.
 
 O mesmo princípio impede que um host do segmento B alcance o servidor do segmento A. A verificação da entrega comprova esse isolamento, enquanto os testes de ping dentro de cada segmento comprovam que os hosts conseguem se comunicar normalmente quando estão na mesma sub-rede.
+
+
+## Entrega 2 — O roteador e o encapsulamento
+
+O MAC precisa mudar porque ele identifica a interface de rede no enlace local, enquanto o IP identifica os dispositivos na comunicação entre redes. Quando o pacote passa pelo roteador, os endereços IP de origem e destino permanecem os mesmos para que a comunicação continue entre os hosts, mas o quadro Ethernet precisa ser recriado para o próximo enlace. Assim, o MAC de origem e o MAC de destino mudam a cada segmento, enquanto o IP permanece igual de ponta a ponta. Isso demonstra a diferença entre a camada 2, responsável pelos quadros e endereços MAC, e a camada 3, responsável pelo roteamento e endereçamento IP.
