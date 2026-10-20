@@ -163,3 +163,7 @@ O mesmo princípio impede que um host do segmento B alcance o servidor do segmen
 ## Entrega 2 — O roteador e o encapsulamento
 
 O MAC precisa mudar porque ele identifica a interface de rede no enlace local, enquanto o IP identifica os dispositivos na comunicação entre redes. Quando o pacote passa pelo roteador, os endereços IP de origem e destino permanecem os mesmos para que a comunicação continue entre os hosts, mas o quadro Ethernet precisa ser recriado para o próximo enlace. Assim, o MAC de origem e o MAC de destino mudam a cada segmento, enquanto o IP permanece igual de ponta a ponta. Isso demonstra a diferença entre a camada 2, responsável pelos quadros e endereços MAC, e a camada 3, responsável pelo roteamento e endereçamento IP.
+
+## Entrega 3 — Disponibilidade e tolerância a falhas
+
+O cliente não consegue distinguir uma réplica morta de uma réplica particionada da rede, pois nos dois casos ela pode deixar de responder às requisições dentro do tempo limite definido pelo curl. Isso não é necessariamente um problema, porque o objetivo do cliente é encontrar uma réplica alcançável e manter o serviço disponível. Se uma réplica não responder, o cliente tenta as outras e, se nenhuma estiver acessível, informa INDISPONIVEL. Essa estratégia permite lidar com falhas sem ficar bloqueado esperando uma resposta. Porém, o cliente não identifica a causa da indisponibilidade, sendo necessários mecanismos adicionais de monitoramento para diferenciar uma réplica desligada de uma falha de comunicação na rede.
