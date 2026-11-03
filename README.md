@@ -167,3 +167,7 @@ O MAC precisa mudar porque ele identifica a interface de rede no enlace local, e
 ## Entrega 3 — Disponibilidade e tolerância a falhas
 
 O cliente não consegue distinguir uma réplica morta de uma réplica particionada da rede, pois nos dois casos ela pode deixar de responder às requisições dentro do tempo limite definido pelo curl. Isso não é necessariamente um problema, porque o objetivo do cliente é encontrar uma réplica alcançável e manter o serviço disponível. Se uma réplica não responder, o cliente tenta as outras e, se nenhuma estiver acessível, informa INDISPONIVEL. Essa estratégia permite lidar com falhas sem ficar bloqueado esperando uma resposta. Porém, o cliente não identifica a causa da indisponibilidade, sendo necessários mecanismos adicionais de monitoramento para diferenciar uma réplica desligada de uma falha de comunicação na rede.
+
+## Entrega 4 — A rota se refaz sozinha
+
+O tempo de convergência foi de aproximadamente 60 segundos, período necessário para que o protocolo RIP identificasse a queda do caminho principal e atualizasse as rotas para utilizar o caminho alternativo por r3. Em uma rede com 50 roteadores, esse tempo poderia ser maior, pois haveria mais roteadores trocando informações e atualizando suas tabelas de roteamento, aumentando o tempo necessário para que todos reconhecessem a mudança e a rede se estabilizasse.
